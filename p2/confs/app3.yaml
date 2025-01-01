@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app3-content
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: app3-content
+          configMap:
+            name: app3-content
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app3-content
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>App 3</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; background-color: #fff0f5; }
+      </style>
+    </head>
+    <body>
+      <h1>Welcome to App 3!</h1>
+      <p>This is the third application.</p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3-service
+spec:
+  selector:
+    app: app3
+  ports:
+    - port: 80
+      targetPort: 80

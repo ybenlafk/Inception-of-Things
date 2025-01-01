@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app2-content
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: app2-content
+          configMap:
+            name: app2-content
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app2-content
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>App 2</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; background-color: #f5fff0; }
+      </style>
+    </head>
+    <body>
+      <h1>Welcome to App 2!</h1>
+      <p>This is the second application.</p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2-service
+spec:
+  selector:
+    app: app2
+  ports:
+    - port: 80
+      targetPort: 80
