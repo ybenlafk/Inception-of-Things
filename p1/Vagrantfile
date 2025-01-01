@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    # Base box
+    config.vm.box = "ubuntu/jammy64" # Ubuntu 22.04 LTS (latest stable version)
+  
+    # Shared VM configurations
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"    # 512 MB of RAM
+      vb.cpus = 1          # 1 CPU
+    end
+  
+    # Machine 1: Server (ybenlafkS)
+    config.vm.define "ybenlafkS" do |server|
+      server.vm.hostname = "ybenlafkS"
+      server.vm.network "private_network", ip: "192.168.56.110" # Dedicated IP
+  
+      # Provisioning: Set up the server
+      server.vm.provision "shell", path: "./scripts/setup-common.sh"
+      server.vm.provision "shell", path: "./confs/controller-install.sh"
+    end
+  
+    # Machine 2: ServerWorker (ybenlafkSW)
+    config.vm.define "ybenlafkSW" do |worker|
+      worker.vm.hostname = "ybenlafkSW"
+      worker.vm.network "private_network", ip: "192.168.56.111" # Dedicated IP
+  
+      # Provisioning: Set up the worker
+      worker.vm.provision "shell", path: "./scripts/setup-common.sh"
+      worker.vm.provision "shell", inline: <<-SHELL
+        # Fetch the K3s token
+        TOKEN=$(bash /vagrant/scripts/set-k3s-token.sh)
+        
+        # Pass the token to the worker setup script
+        bash /vagrant/confs/worker-install.sh "$TOKEN"
+      SHELL
+    end
+  end
+  
