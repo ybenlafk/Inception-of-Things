@@ -14,7 +14,12 @@ Vagrant.configure("2") do |config|
     server.vm.provision "shell", path: "./scripts/setup-common.sh"
     server.vm.provision "shell", path: "./confs/controller-install.sh"
     server.vm.provision "shell", inline: <<-SHELL
+      # Wait for k3s to be fully initialized
+      while ! test -f /var/lib/rancher/k3s/server/node-token; do
+        sleep 5
+      done
       sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/.vagrant/node-token
+      chmod 644 /vagrant/.vagrant/node-token
     SHELL
   end
 
@@ -31,6 +36,7 @@ Vagrant.configure("2") do |config|
 
     worker.vm.provision "shell", path: "./scripts/setup-common.sh"
     worker.vm.provision "shell", inline: <<-SHELL
+      sleep 30
       TOKEN=$(cat /vagrant/.vagrant/node-token)
       bash /vagrant/confs/worker-install.sh "$TOKEN"
     SHELL
