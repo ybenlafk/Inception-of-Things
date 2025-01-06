@@ -6,8 +6,8 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "ybenlafkS"
     server.vm.network "private_network", ip: "192.168.56.110"
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-      vb.cpus = 1
+      vb.memory = "2048"  # Increased memory
+      vb.cpus = 2         # Increased CPUs
       vb.name = "ybenlafkS"
     end
 
@@ -15,7 +15,16 @@ Vagrant.configure("2") do |config|
     server.vm.provision "shell", path: "./confs/controller-install.sh"
     server.vm.provision "shell", inline: <<-SHELL
       # Wait for k3s to be fully initialized
+      timeout=300  # 5 minutes timeout
+      start_time=$(date +%s)
       while ! test -f /var/lib/rancher/k3s/server/node-token; do
+        current_time=$(date +%s)
+        elapsed=$((current_time - start_time))
+        if [ $elapsed -gt $timeout ]; then
+          echo "Timeout waiting for node-token"
+          exit 1
+        fi
+        echo "Waiting for node-token... ($elapsed seconds elapsed)"
         sleep 5
       done
       sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/.vagrant/node-token
@@ -29,14 +38,14 @@ Vagrant.configure("2") do |config|
     worker.vm.hostname = "ybenlafkSW"
     worker.vm.network "private_network", ip: "192.168.56.111"
     worker.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-      vb.cpus = 1
+      vb.memory = "2048"  # Increased memory
+      vb.cpus = 2         # Increased CPUs
       vb.name = "ybenlafkSW"
     end
 
     worker.vm.provision "shell", path: "./scripts/setup-common.sh"
     worker.vm.provision "shell", inline: <<-SHELL
-      sleep 30
+      sleep 60  # Increased initial wait time
       TOKEN=$(cat /vagrant/.vagrant/node-token)
       bash /vagrant/confs/worker-install.sh "$TOKEN"
     SHELL
