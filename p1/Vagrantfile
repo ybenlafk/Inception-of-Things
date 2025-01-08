@@ -1,44 +1,26 @@
 Vagrant.configure("2") do |config|
-  
-  # Server
-  config.vm.define "ybenlafkS" do |server|
-    server.vm.box = "ubuntu/jammy64"
-    server.vm.hostname = "ybenlafkS"
-    server.vm.network "private_network", ip: "192.168.56.110"
-    server.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-      vb.cpus = 1
-      vb.name = "ybenlafkS"
-    end
 
-    server.vm.provision "shell", path: "./scripts/setup-common.sh"
-    server.vm.provision "shell", path: "./confs/controller-install.sh"
-    server.vm.provision "shell", inline: <<-SHELL
-      # Wait for k3s to be fully initialized
-      while ! test -f /var/lib/rancher/k3s/server/node-token; do
-        sleep 5
-      done
-      sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/.vagrant/node-token
-      chmod 644 /vagrant/.vagrant/node-token
-    SHELL
-  end
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_version = "20230607.0.5"
 
-  # Server Worker
-  config.vm.define "ybenlafkSW" do |worker|
-    worker.vm.box = "ubuntu/jammy64"
-    worker.vm.hostname = "ybenlafkSW"
-    worker.vm.network "private_network", ip: "192.168.56.111"
-    worker.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-      vb.cpus = 1
-      vb.name = "ybenlafkSW"
-    end
+	config.vm.provider "virtualbox" do |v|
+		v.memory = 1024
+		v.cpus = 1
+		# v.name = "rben-mou"
+	end
 
-    worker.vm.provision "shell", path: "./scripts/setup-common.sh"
-    worker.vm.provision "shell", inline: <<-SHELL
-      sleep 30
-      TOKEN=$(cat /vagrant/.vagrant/node-token)
-      bash /vagrant/confs/worker-install.sh "$TOKEN"
-    SHELL
-  end
+	# K3s Server
+	config.vm.define "rben-mouS" do |conf|
+		conf.vm.hostname = "rben-mouS"
+		conf.vm.network "private_network", ip: "192.168.56.110"
+		conf.vm.provision "shell", path: "scripts/server.sh"
+	end
+
+	# K3s Agent
+	config.vm.define "rben-mouSW" do |conf|
+		conf.vm.hostname = "rben-mouSW"
+		conf.vm.network "private_network", ip: "192.168.56.111"
+		conf.vm.provision "shell", path: "scripts/agent.sh"
+	end
+
 end
