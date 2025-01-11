@@ -1,29 +1,35 @@
-# TODO: Dependencies 
-# - curl
-# - kubectl
-# - docker
-# - argocd cli
 # Cluster configurations
+sudo apt update -y && sudo apt upgrade -y
 
-k3d cluster create -p "8888:8888@loadbalancer" part3
+# kubectl
+snap install kubectl --classic
 
-# Dev
+# Docker
+# From offical Docker docs
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-# kubectl create -f ../config/dev-namespace.yaml
-# kubectl apply -f ../config/wil-app.yaml
-# kubectl apply -f ../config/wil-ingress.yaml
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# Argocd
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
 
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-sleep 5
-echo "Waiting for argocd pods to be ready.."
-kubectl wait pod --all --for=condition=Ready --namespace=argocd --timeout=-1s
-kubectl port-forward svc/argocd-server -n argocd 8080:443& disown
-argocd login localhost:8080 --username admin --password $(argocd admin initial-password -n argocd | cut -d\  -f1) --insecure
-# argocd cluster add k3d-part3 --insecure -y --in-cluster # FIXME: This might not be necessary
-kubectl config set-context --current --namespace=argocd
-# TODO: replace the path below with the p3/config/
-argocd app create wil-app --repo https://github.com/soufianeamini/wil-app.git --path . --dest-server https://kubernetes.default.svc --dest-namespace dev
-argocd app set wil-app --sync-policy automated
+# k3d
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# argocd cli
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+
