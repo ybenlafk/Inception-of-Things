@@ -9,5 +9,5 @@ sudo rm -rf /etc/gitlab
 
 sudo rm /etc/apt/sources.list.d/gitlab*
 
-sudo apt-get update
+sudo apt-get update -y
 
