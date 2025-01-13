@@ -1,4 +1,4 @@
-k3d cluster create -p "8888:8888@loadbalancer" part3
+k3d cluster create -p "8888:8888@loadbalancer" bonus
 
 # Argocd
 
