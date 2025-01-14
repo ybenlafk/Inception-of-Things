@@ -1,7 +1,7 @@
 sudo gitlab-ctl stop
 
-sudo apt-get remove gitlab-ee
-sudo apt-get purge gitlab-ee
+sudo apt-get remove gitlab-ee -y
+sudo apt-get purge gitlab-ee -y
 
 sudo rm -rf /opt/gitlab
 sudo rm -rf /var/opt/gitlab
