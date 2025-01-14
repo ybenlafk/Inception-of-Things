@@ -1,4 +1,4 @@
-git clone git@gitlab.example.com:root/bonus_project.git
+git clone http://localhost:bonus_pass/root/bonus_project.git
 cp ../config/*.yaml bonus_project
 cd bonus_project
 git config user.name "admin"
