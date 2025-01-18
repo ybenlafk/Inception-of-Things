@@ -1,8 +1,3 @@
-#!/usr/bin/env bash
-k3d cluster create -p "8888:8888@loadbalancer" bonus
-
-# Argocd
-
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 sleep 5
