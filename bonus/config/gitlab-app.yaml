@@ -30,6 +30,9 @@ spec:
             path: /home/rbenmou/Desktop/gitlab-opt
       containers:
         - name: gitlab-app
+          env:
+            - name: GITLAB_ROOT_PASSWORD
+              value: "password123456"
           image: gitlab/gitlab-ee:17.8.0-ee.0
           volumeMounts:
             - name: gitlab-config
@@ -40,7 +43,6 @@ spec:
           volumeMounts:
             - name: gitlab-data
               mountPath: /var/opt/gitlab
-          # command: ["/opt/gitlab/embedded/bin/runsvdir-start"]
           ports:
             - containerPort: 80
             - containerPort: 443
@@ -55,5 +57,5 @@ spec:
   selector:
     app: gitlab-app
   ports:
-    - port: 80
+    - port: 8080
       targetPort: 80
