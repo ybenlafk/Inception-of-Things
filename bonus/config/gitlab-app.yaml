@@ -21,16 +21,16 @@ spec:
       volumes:
         - name: gitlab-config
           hostPath:
-            path: /tmp/gitlab-config
+            path: /home/rbenmou/Desktop/gitlab-config
         - name: gitlab-logs
           hostPath:
-            path: /tmp/gitlab-log
+            path: /home/rbenmou/Desktop/gitlab-log
         - name: gitlab-data
           hostPath:
-            path: /tmp/gitlab-opt
+            path: /home/rbenmou/Desktop/gitlab-opt
         - name: gitlab-bonus
           hostPath:
-            path: /tmp/gitlab-bonus
+            path: /home/rbenmou/Desktop/gitlab-bonus
       containers:
         - name: gitlab-app
           env:

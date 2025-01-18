@@ -1,5 +1,5 @@
 create_gitlab_project() {
-	sudo gitlab-rails runner "project = Project.create( name: 'bonus_project', path: 'bonus_project', creator_id: user.id, visibility_level: 20, namespace_id: 1, organization_id: 1); project.save!"
+	gitlab-rails runner "project = Project.create( name: 'bonus_project', path: 'bonus_project', creator_id: user.id, visibility_level: 20, namespace_id: 1, organization_id: 1); project.save!"
 }
 
 push_project() {
