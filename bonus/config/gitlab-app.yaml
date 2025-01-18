@@ -1,10 +1,18 @@
-api: apps/v1
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-app
   namespace: gitlab
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab-app
   template:
     metadata:
       labels:
@@ -12,11 +20,14 @@ spec:
     spec:
       volumes:
         - name: gitlab-config
-          hostPath: /tmp/config
+          hostPath:
+            path: /home/rbenmou/Desktop/gitlab-config
         - name: gitlab-logs
-          hostPath: /tmp/log
+          hostPath:
+            path: /home/rbenmou/Desktop/gitlab-log
         - name: gitlab-data
-          hostPath: /tmp/opt
+          hostPath:
+            path: /home/rbenmou/Desktop/gitlab-opt
       containers:
         - name: gitlab-app
           image: gitlab/gitlab-ee:17.8.0-ee.0
@@ -29,6 +40,7 @@ spec:
           volumeMounts:
             - name: gitlab-data
               mountPath: /var/opt/gitlab
+          # command: ["/opt/gitlab/embedded/bin/runsvdir-start"]
           ports:
             - containerPort: 80
             - containerPort: 443
