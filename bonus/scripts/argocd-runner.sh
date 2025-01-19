@@ -10,5 +10,5 @@ kubectl port-forward svc/argocd-server -n argocd 9091:443& disown
 argocd login localhost:9091 --username admin --password "$(argocd admin initial-password -n argocd | cut -d\  -f1)" --insecure
 argocd cluster add k3d-bonus --insecure -y --in-cluster
 kubectl config set-context --current --namespace=argocd
-argocd app create wil-app --repo http://gitlab-ref:8080/root/bonus_project.git --path . --dest-server https://kubernetes.default.svc --dest-namespace dev
+argocd app create wil-app --repo http://gitlab-ref:8080/root/samini_bonus_project.git --path . --dest-server https://kubernetes.default.svc --dest-namespace dev
 argocd app set wil-app --sync-policy automated
