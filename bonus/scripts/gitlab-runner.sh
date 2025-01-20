@@ -6,7 +6,3 @@ cp ../config/wil-app/*.yaml /tmp/gitlab-bonus
 cp ./gitlab-configure.sh /tmp/gitlab-bonus
 
 kubectl apply -f ../config/gitlab-app.yaml
-sleep 10
-echo "Waiting for gitlab pod to be ready.."
-kubectl wait pod --all --for=condition=Ready --namespace=gitlab --timeout=-1s
-kubectl port-forward svc/gitlab-app-service -n gitlab 8080:8080& disown
