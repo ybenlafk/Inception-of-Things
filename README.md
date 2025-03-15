@@ -1,7 +1,3 @@
-Certainly! Below is a README file for the "Inception-of-Things (IoT)" project based on the provided document:
-
----
-
 # Inception-of-Things (IoT)
 
 ## Overview
@@ -88,7 +84,3 @@ project-root/
     ├── scripts/
     └── confs/
 ```
-
----
-
-This README provides a comprehensive overview of the project, its structure, and the steps required to complete each part. Make sure to follow the guidelines and organize your work accordingly for a successful evaluation.
